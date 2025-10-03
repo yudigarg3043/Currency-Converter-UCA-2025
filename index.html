@@ -7,107 +7,223 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/8088569b2d.js" crossorigin="anonymous"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-    }
-    .field {
-      max-width: 50%;
-    }
-    .form_fieldset {
-      border: 4px solid black;
-      border-radius: 10px;
-      margin-top: 120px;
-      padding-left: 30px;
-      padding-right: 20px;
-      margin-left: 10px;
-      max-width: 1100px;
-    }
-    .form__legend {
-      border: 2px solid white;
-      padding: 5px;
-      border-radius: 12px;
-      font-size: 20px;
-      background-color: black;
-      color: white;
-      max-width: 50%;
-    }
-    .round-btn {
-      max-width: 40px;
-      border-radius: 60%;
-      padding: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container nav-bar bg-black rounded-pill m-5">
-    <nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container nav-bar bg-white rounded-5 px-3 py-2 border border-dark mt-4">
+    <nav class="navbar navbar-expand-lg navbar-light p-0">
       <div class="container-fluid">
-        <a class="navbar-brand text-white" href="#">Currency Converter</a>
+        <a class="navbar-brand text-dark ps-3" href="#">Currency Converter</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link text-white" aria-current="page" href="#">Home</a>
-            <a class="nav-link text-white" href="#">Crypto-Currency</a>
-            <a class="nav-link text-white" href="#">Feedback</a>
-            <a class="nav-link text-white" aria-disabled="true">About</a>
+        <div class="collapse navbar-collapse ps-3 m-2 rounded-pill" id="navbarNavAltMarkup">
+          <div class="navbar-nav w-100">
+            <a class="nav-link text-dark py-1" aria-current="page" href="#">Home</a>
+            <a class="nav-link text-dark py-1" href="#">Crypto-Currency</a>
+            <a class="nav-link text-dark py-1" href="#">Feedback</a>
+            <a class="nav-link text-dark py-1" aria-disabled="true">About</a>
           </div>
         </div>
       </div>
     </nav>
   </div>
-  <div class="container field">
-    <fieldset class="form_fieldset p-4">
-      <legend class="form__legend">Fiat-Currency Converter</legend>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-5">
-            <h3>Enter Amount:</h3>
+  <div class="main-content d-flex flex-row">
+    <div class="col-md-6 container field">
+      <fieldset class="form_fieldset">
+        <legend class="form__legend">Fiat-Currency Converter</legend>
+        <div class="container mt-3">
+          <div class="row">
+            <div class="col-md-5">
+              <label for="amount" class="form-label h3 text-white">Enter Amount:</label>
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" id="amount" placeholder="Type amount to convert...">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-outline-light m-1"><h5>Reset</h5></button>
+            </div>
           </div>
-          <div class="col-md-5">
-            <input type="text">
+          <div class="row">
+            <div class="col-md-5">
+              <label for="fromCurr" class="form-label h3 text-white">From:</label>
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" list="datalistOptions" id="fromCurr" placeholder="Type to search Currency...">
+              <datalist id="datalistOptions">
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="ARS">ARS - Argentine Peso</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="BDT">BDT - Bangladeshi Taka</option>
+                <option value="BHD">BHD - Bahraini Dinar</option>
+                <option value="BRL">BRL - Brazilian Real</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="CLP">CLP - Chilean Peso</option>
+                <option value="CNY">CNY - Chinese Renminbi</option>
+                <option value="COP">COP - Colombian Peso</option>
+                <option value="CZK">CZK - Czech Koruna</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="EGP">EGP - Egyptian Pound</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - Pound Sterling</option>
+                <option value="HKD">HKD - Hong Kong Dollar</option>
+                <option value="HUF">HUF - Hungarian Forint</option>
+                <option value="IDR">IDR - Indonesian Rupiah</option>
+                <option value="ILS">ILS - Israeli New Shekel</option>
+                <option value="INR">INR - Indian Rupee</option>
+                <option value="JOD">JOD - Jordanian Dinar</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="KES">KES - Kenyan Shilling</option>
+                <option value="KRW">KRW - South Korean Won</option>
+                <option value="KWD">KWD - Kuwaiti Dinar</option>
+                <option value="LKR">LKR - Sri Lanka Rupee</option>
+                <option value="MAD">MAD - Moroccan Dirham</option>
+                <option value="MMK">MMK - Burmese Kyat</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="MYR">MYR - Malaysian Ringgit</option>
+                <option value="NGN">NGN - Nigerian Naira</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="NPR">NPR - Nepalese Rupee</option>
+                <option value="NZD">NZD - New Zealand Dollar</option>
+                <option value="OMR">OMR - Omani Rial</option>
+                <option value="PEN">PEN - Peruvian Sol</option>
+                <option value="PHP">PHP - Philippine Peso</option>
+                <option value="PKR">PKR - Pakistani Rupee</option>
+                <option value="PLN">PLN - Polish Złoty</option>
+                <option value="QAR">QAR - Qatari Riyal</option>
+                <option value="RON">RON - Romanian Leu</option>
+                <option value="RUB">RUB - Russian Ruble</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="THB">THB - Thai Baht</option>
+                <option value="TRY">TRY - Turkish Lira</option>
+                <option value="TWD">TWD - New Taiwan Dollar</option>
+                <option value="TZS">TZS - Tanzanian Shilling</option>
+                <option value="UAH">UAH - Ukrainian Hryvnia</option>
+                <option value="UGX">UGX - Ugandan Shilling</option>
+                <option value="USD">USD - United States Dollar</option>
+                <option value="UYU">UYU - Uruguayan Peso</option>
+                <option value="VND">VND - Vietnamese Đồng</option>
+                <option value="XAF">XAF - Central African CFA Franc</option>
+                <option value="XOF">XOF - West African CFA Franc</option>
+                <option value="ZAR">ZAR - South African Rand</option>
+                <option value="ZMW">ZMW - Zambian Kwacha</option>
+              </datalist>
+            </div>
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-outline-dark"><h5>Reset</h5></button>
+          <div class="row d-flex justify-content-center mb-2">
+            <div class="col-auto px-1">
+              <button class="round-btn">
+                <i class="fa-solid fa-retweet"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+              <label for="toCurr" class="form-label h3 text-white">To:</label>
+            </div>
+            <div class="col-md-4 mb-2">
+              <input class="form-control" list="datalistOptions" id="toCurr" placeholder="Type to search Currency...">
+              <datalist id="datalistOptions">
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="ARS">ARS - Argentine Peso</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="BDT">BDT - Bangladeshi Taka</option>
+                <option value="BHD">BHD - Bahraini Dinar</option>
+                <option value="BRL">BRL - Brazilian Real</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="CLP">CLP - Chilean Peso</option>
+                <option value="CNY">CNY - Chinese Renminbi</option>
+                <option value="COP">COP - Colombian Peso</option>
+                <option value="CZK">CZK - Czech Koruna</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="EGP">EGP - Egyptian Pound</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - Pound Sterling</option>
+                <option value="HKD">HKD - Hong Kong Dollar</option>
+                <option value="HUF">HUF - Hungarian Forint</option>
+                <option value="IDR">IDR - Indonesian Rupiah</option>
+                <option value="ILS">ILS - Israeli New Shekel</option>
+                <option value="INR">INR - Indian Rupee</option>
+                <option value="JOD">JOD - Jordanian Dinar</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="KES">KES - Kenyan Shilling</option>
+                <option value="KRW">KRW - South Korean Won</option>
+                <option value="KWD">KWD - Kuwaiti Dinar</option>
+                <option value="LKR">LKR - Sri Lanka Rupee</option>
+                <option value="MAD">MAD - Moroccan Dirham</option>
+                <option value="MMK">MMK - Burmese Kyat</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="MYR">MYR - Malaysian Ringgit</option>
+                <option value="NGN">NGN - Nigerian Naira</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="NPR">NPR - Nepalese Rupee</option>
+                <option value="NZD">NZD - New Zealand Dollar</option>
+                <option value="OMR">OMR - Omani Rial</option>
+                <option value="PEN">PEN - Peruvian Sol</option>
+                <option value="PHP">PHP - Philippine Peso</option>
+                <option value="PKR">PKR - Pakistani Rupee</option>
+                <option value="PLN">PLN - Polish Złoty</option>
+                <option value="QAR">QAR - Qatari Riyal</option>
+                <option value="RON">RON - Romanian Leu</option>
+                <option value="RUB">RUB - Russian Ruble</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="THB">THB - Thai Baht</option>
+                <option value="TRY">TRY - Turkish Lira</option>
+                <option value="TWD">TWD - New Taiwan Dollar</option>
+                <option value="TZS">TZS - Tanzanian Shilling</option>
+                <option value="UAH">UAH - Ukrainian Hryvnia</option>
+                <option value="UGX">UGX - Ugandan Shilling</option>
+                <option value="USD">USD - United States Dollar</option>
+                <option value="UYU">UYU - Uruguayan Peso</option>
+                <option value="VND">VND - Vietnamese Đồng</option>
+                <option value="XAF">XAF - Central African CFA Franc</option>
+                <option value="XOF">XOF - West African CFA Franc</option>
+                <option value="ZAR">ZAR - South African Rand</option>
+                <option value="ZMW">ZMW - Zambian Kwacha</option>
+              </datalist>
+            </div>
+          </div>
+          <div class="row d-flex justify-content-between align-items-center mt-3">
+            <div class="col-auto px-1">
+              <button class="round-btn">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </button>
+            </div>
+            <div class="col-8 col-md-9 d-flex flex-column flex-md-row justify-content-between gap-2">
+              <button class="btn btn-outline-light" style="flex-grow: 1;">Save Currency</button>
+              <button class="btn btn-outline-light" id="convert" style="flex-grow: 1;">Convert</button>
+              <button class="btn btn-outline-light" style="flex-grow: 1;">Historical Data</button>
+            </div>
+            <div class="col-auto px-1">
+              <button class="round-btn">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row mt-4 justify-content-center" id="result-container" style="display: none;">
+            <div class="col-12 col-sm-8 col-md-6">
+              <div class="card bg-dark text-white border-light shadow-lg">
+                <div class="card-body text-center py-2">
+                  <p class="fs-2 fw-bolder text-success mb-0" id="converted-amount"></p>
+                  <p class="text-light mt-1" id="original-query"></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-5">
-            <h3>From:</h3>
-          </div>
-          <div class="col-md-5">
-            <input type="text">
-          </div>
-        </div>
-        <div class="row d-flex justify-content-center mb-2">
-          <button class="round-btn p-1">
-            <i class="fa-solid fa-retweet"></i>
-          </button>
-        </div>
-        <div class="row">
-          <div class="col-md-5">
-            <h3>To:</h3>
-          </div>
-          <div class="col-md-5">
-            <input type="text">
-          </div>
-        </div>
-        <div class="row d-flex justify-content-between">
-          <button class="round-btn">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-          </button>
-          <button class="btn btn-outline-dark w-25">Save Currency</button>
-          <button class="btn btn-outline-dark w-25">Convert</button>
-          <button class="btn btn-outline-dark w-25">Historical Data</button>
-          <button class="round-btn">
-            <i class="fa-solid fa-heart"></i>
-          </button>
-        </div>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-4 news">
+      <h1 class="text-white">news</h1>
+    </div>
   </div>
+  <script src="D:\Yudhish\script.js"></script>
 </body>
 </html>
