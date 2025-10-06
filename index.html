@@ -41,7 +41,7 @@
               <input class="form-control" id="amount" placeholder="Type amount to convert...">
             </div>
             <div class="col-md-2">
-              <button class="btn btn-outline-light m-1"><h5>Reset</h5></button>
+              <button class="btn btn-outline-light m-1" id="reset"><h5>Reset</h5></button>
             </div>
           </div>
           <div class="row">
@@ -115,7 +115,7 @@
           </div>
           <div class="row d-flex justify-content-center mb-2">
             <div class="col-auto px-1">
-              <button class="round-btn">
+              <button class="round-btn" id="swap">
                 <i class="fa-solid fa-retweet"></i>
               </button>
             </div>
@@ -220,10 +220,47 @@
       </fieldset>
     </div>
     <div class="col-md-2"></div>
-    <div class="col-md-4 container news">
-      <h1 class="text-white">news</h1>
+    <div class="col-md-4 container">
+      <div class="market-panel">
+        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+          <h3 class="text-white mb-0">Market Insights</h3>
+          <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#managePairsModal" id="manageMarketPairsBtn">
+            Manage List <i class="fa-solid fa-gear"></i>
+          </button>
+        </div>
+        <div id="market-list">
+          <p class="text-light">Initializing market data...</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="managePairsModal" tabindex="-1" aria-labelledby="managePairsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="managePairsModalLabel">Manage Currency Pairs</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-warning small">Search and click a currency pair to toggle it on/off your Market Insights panel.</p>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control bg-secondary text-white border-0" placeholder="e.g., USD/EUR" id="newPairInput" maxlength="7">
+                <button class="btn btn-primary" type="button" id="addCustomPairBtn">
+                  Add
+                </button>
+            </div>
+            <h6 class="text-light mt-4">Current Preferred Pairs:</h6>
+            <div id="currentPairsDisplay" class="d-flex flex-wrap gap-2">
+              <span class="text-secondary">Loading...</span>
+            </div> 
+          </div>
+          <div class="modal-footer border-secondary">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <script src="D:\Yudhish\script.js"></script>
+  <script src="D:\Yudhish\marketpanel.js"></script>
 </body>
 </html>
