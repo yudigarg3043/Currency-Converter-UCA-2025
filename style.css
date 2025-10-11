@@ -3,7 +3,7 @@
     margin: 0;
 }
 body {
-    background-image: url('bg.png');
+    background-image: url('bg-2.png');
     background-repeat: no-repeat;
     background-size: auto;
 }
@@ -11,7 +11,7 @@ body {
     height: 80%;
 }
 .form_fieldset {
-    border: 4px solid white;
+    border: 4px solid #7fefe2;
     border-radius: 10px;
     margin-top: 120px;
     margin-left: 10px;
@@ -20,14 +20,14 @@ body {
     position: relative;
 }
 .form__legend {
-    border: 4px solid white;
+    border: 4px solid #7fefe2;
     padding: 5px 15px;
     border-radius: 10px;
-    font-size: 18px;
-    background-color: black;
-    color: white;
+    font-size: 22px;
+    background-color: #7fefe2;
+    color: black;
     position: absolute;
-    top: -18px;
+    top: -25px;
     left: 20px;
     max-width: fit-content;
 }
@@ -38,4 +38,86 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.history-panel-container, .favorites-panel-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    max-width: 450px;
+    width: 90%;
+}
+#history-list-body, #favorites-list-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.history-item, .favorites-item {
+    transition: background-color 0.1s;
+}
+
+.history-item:hover, .favorites-item:hover {
+    background-color: #343a40;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-color: #6c757d;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    background-color: #1a1a1a;
+    box-shadow: 0 0 0 0.25rem rgba(135, 206, 250, 0.4);
+    border-color: #87CEFA;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
+}
+
+.form-control::-webkit-input-placeholder { /* Webkit (Chrome, Safari) */
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-control:-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-control::-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-label {
+    font-size: 1.5rem !important;
+    color: #A9F0D1 !important;
+    margin-bottom: 0.25rem;
+}
+
+/* .btn-outline-light {
+    color: #A9F0D1 !important;
+} */
+
+/* Target all buttons within the main fieldset that have the light outline style */
+/* The general rule targets the specific Bootstrap class for strong override */
+.btn-outline-light, .round-btn { 
+    /* Set color to the text color and border color explicitly */
+    color: #7fefe2 !important;
+    border-color: #7fefe2 !important;
+    border-width: 2px !important; /* Ensure the border is thick enough to see */
+    border-style: solid !important; 
+    
+    /* Ensure background is transparent so the border stands out */
+    background-color: transparent !important;
+}
+
+.btn-outline-light:hover, .round-btn:hover {
+    /* When hovering, fill the button with the theme color, and use dark text */
+    background-color: #A9F0D1 !important;
+    color: black !important; /* Black text on light background for contrast */
+    border-color: black !important; /* Black border on hover for depth */
 }

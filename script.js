@@ -1,8 +1,17 @@
 const apiKey = "703459cf375a15b3773dbe4b";
 const HISTORY_KEY = 'currencyHistory'; 
+const FAVORITES_KEY = 'currencyFavorites';
 
-// Web Storage: Load history records, defaults to empty array
+const favoritePairs = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
+
 let historyRecords = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); 
+
+document.getElementById("viewHistory").onclick = renderHistoryPanel;
+document.getElementById("closeHistoryBtn").onclick = renderHistoryPanel;
+
+document.getElementById("saveCurrencyBtn").onclick = toggleFavorite; 
+document.getElementById("toggleFavorite").onclick = renderFavoritesPanel;
+document.getElementById("closeFavoritesBtn").onclick = renderFavoritesPanel;
 
 /**
  * Constructor Functions
@@ -32,8 +41,6 @@ function saveHistory(amount, from, to, conversionResult) {
     
     // Web Storage: Persist the updated array
     localStorage.setItem(HISTORY_KEY, JSON.stringify(historyRecords));
-    
-    renderHistoryPanel(); 
 }
 
 // Swap functionality
@@ -57,13 +64,9 @@ document.getElementById("reset").onclick = () => {
     console.log("Inputs reset.");
 };
 
-/**
- * Renders the history records into the dedicated panel (assuming ID: history-panel).
- * CONCEPTS: Loops, Destructuring
- */
 function renderHistoryPanel() {
     const historyPanel = document.getElementById("history-panel");
-    const historyList = document.getElementById("history-list");
+    const historyList = document.getElementById("history-list-body");
     
     if (!historyPanel || !historyList) {
         console.error("History panel elements (history-panel or history-list) not found in DOM.");
@@ -83,7 +86,6 @@ function renderHistoryPanel() {
         return;
     }
 
-    // Loops and Destructuring
     historyRecords.forEach(record => {
         // Destructuring: Cleanly pull data from the HistoryRecord object
         const { amount, from, to, result, timestamp } = record;
@@ -106,8 +108,6 @@ function renderHistoryPanel() {
     });
 }
 
-// Link history button (assuming ID: viewHistoryBtn)
-document.getElementById("viewHistoryBtn").onclick = renderHistoryPanel;
 
 async function convertCurrency(fromCurrency, toCurrency, amount) {
     const url = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${fromCurrency}/${toCurrency}`;
@@ -191,3 +191,107 @@ document.getElementById("convert").onclick = () => {
             document.getElementById("result-container").style.display = 'flex';
         });
 };
+
+function updateFavoriteIcon(fromCurr, toCurr) {
+    const pair = `${fromCurr}/${toCurr}`;
+    const heartIcon = document.getElementById("toggleFavoriteIcon");
+    
+    if (heartIcon) {
+        if (favoritePairs.has(pair)) {
+            // Favorited state: Solid heart, yellow/warning color
+            heartIcon.classList.remove('fa-regular', 'text-white');
+            heartIcon.classList.add('fa-solid', 'text-warning');
+        } else {
+            // Default state: Outline heart, white color
+            heartIcon.classList.remove('fa-solid', 'text-warning');
+            heartIcon.classList.add('fa-regular', 'text-white');
+        }
+    }
+}
+
+function toggleFavorite(event) {
+    const fromCurr = document.getElementById("fromCurr").value.toUpperCase();
+    const toCurr = document.getElementById("toCurr").value.toUpperCase();
+    
+    if (!fromCurr || !toCurr || fromCurr === toCurr) {
+        alert("⚠️ Please enter a valid, different currency pair.");
+        return;
+    }
+    
+    const pair = `${fromCurr}/${toCurr}`;
+
+    if (favoritePairs.has(pair)) {
+        alert(`⚠️ ${pair} currency pair is already in your favorites.`);
+    } else {
+        favoritePairs.add(pair);
+        console.log(`Added ${pair} to favorites.`);
+    }
+
+    // Web Storage: Persist the Set back to Local Storage
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritePairs)));
+    
+    // Update the button icon immediately
+    updateFavoriteIcon(fromCurr, toCurr);
+    
+    // Check if the call originated from the heart button (to show the popup)
+    if (event && event.currentTarget.id === 'toggleFavorite') {
+        renderFavoritesPanel();
+    }
+}
+
+function renderFavoritesPanel() {
+    const favoritesPanel = document.getElementById("favorites-panel");
+    const favoritesList = document.getElementById("favorites-list-body");
+    
+    if (!favoritesPanel || !favoritesList) {
+        console.error("Favorites panel elements not found in DOM.");
+        return;
+    }
+    
+    // Toggle visibility logic (used for both opening and closing)
+    favoritesPanel.style.display = (favoritesPanel.style.display === 'none' || favoritesPanel.style.display === '') ? 'block' : 'none';
+    
+    if (favoritesPanel.style.display === 'none') {
+        return;
+    }
+
+    favoritesList.innerHTML = ''; // Clear previous content
+    
+    if (favoritePairs.size === 0) {
+        favoritesList.innerHTML = '<p class="text-secondary p-3 mb-0 text-center">No favorite pairs saved yet.</p>';
+        return;
+    }
+    
+    // Loops and Destructuring
+    Array.from(favoritePairs).forEach(pair => {
+        // Destructuring: Split the pair string into its components for display
+        const [from, to] = pair.split('/'); 
+        
+        const listItem = document.createElement('div');
+        listItem.className = 'd-flex justify-content-between align-items-center p-2 my-1 rounded border border-secondary';
+        
+        listItem.innerHTML = `
+            <div>
+                <span class="fw-bold">${from} / ${to}</span>
+            </div>
+            <button class="btn btn-sm btn-danger remove-favorite" data-pair="${pair}">Remove</button>
+        `;
+        favoritesList.appendChild(listItem);
+    });
+    
+    // Add event listeners for new 'Remove' buttons
+    favoritesList.querySelectorAll('.remove-favorite').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const pairToRemove = e.currentTarget.getAttribute('data-pair');
+            
+            // Remove from the Set and update storage
+            favoritePairs.delete(pairToRemove);
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritePairs)));
+            
+            // Re-render the panel to update the list
+            renderFavoritesPanel(); 
+            // Also update the icon on the main form in case the pair was the current one
+            updateFavoriteIcon(document.getElementById("fromCurr").value.toUpperCase(), document.getElementById("toCurr").value.toUpperCase());
+        });
+    });
+}

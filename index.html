@@ -13,13 +13,13 @@
   <div class="container nav-bar bg-white rounded-5 px-3 py-2 border border-dark mt-4">
     <nav class="navbar navbar-expand-lg navbar-light p-0">
       <div class="container-fluid">
-        <a class="navbar-brand text-dark ps-3" href="#">Currency Converter</a>
+        <a class="navbar-brand text-dark ps-3 fs-4" href="#">Currency Converter</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse ps-3 m-2 rounded-pill" id="navbarNavAltMarkup">
-          <div class="navbar-nav w-100">
-            <a class="nav-link text-dark py-1" aria-current="page" href="#">Home</a>
+          <div class="navbar-nav w-100 fs-5">
+            <a class="nav-link text-dark py-1" aria-current="page">Home</a>
             <a class="nav-link text-dark py-1" href="#">Crypto-Currency</a>
             <a class="nav-link text-dark py-1" href="#">Feedback</a>
             <a class="nav-link text-dark py-1" href="#">About</a>
@@ -29,16 +29,17 @@
     </nav>
   </div>
   <div class="main-content row">
-    <div class="col-md-6 container field">
-      <fieldset class="form_fieldset px-3 pb-4">
+    <div class="col-md-1"></div>
+    <div class="col-md-6 container-fluid field">
+      <fieldset class=" container form_fieldset px-3 pb-4">
         <legend class="form__legend">Fiat-Currency Converter</legend>
         <div class="container mt-3">
           <div class="row">
             <div class="col-md-5">
-              <label for="amount" class="form-label h3 text-white">Enter Amount:</label>
+              <label for="amount" class="form-label h4 mb-3 text-white">Enter Amount:</label>
             </div>
             <div class="col-md-4">
-              <input class="form-control" id="amount" placeholder="Type amount to convert..." type="number" min="0" step="any">
+              <input class="form-control bg-dark text-white border-secondary shadow-sm" id="amount" placeholder="Type amount to convert..." type="number" min="0" step="any">
             </div>
             <div class="col-md-2">
               <button class="btn btn-outline-light m-1" id="reset"><h5>Reset</h5></button>
@@ -46,10 +47,10 @@
           </div>
           <div class="row">
             <div class="col-md-5">
-              <label for="fromCurr" class="form-label h3 text-white">From:</label>
+              <label for="fromCurr" class="form-label h4 mb-3 text-white">From:</label>
             </div>
             <div class="col-md-4">
-              <input class="form-control" list="datalistOptions" id="fromCurr" placeholder="Type to search Currency...">
+              <input class="form-control bg-dark text-white border-secondary shadow-sm" list="datalistOptions" id="fromCurr" placeholder="Type to search Currency...">
               <datalist id="datalistOptions">
                 <option value="AED">AED - UAE Dirham</option>
                 <option value="ARS">ARS - Argentine Peso</option>
@@ -114,7 +115,7 @@
             </div>
           </div>
           <div class="row d-flex justify-content-center mb-2">
-            <div class="col-auto px-1">
+            <div class="col-auto p-1">
               <button class="round-btn" id="swap">
                 <i class="fa-solid fa-retweet"></i>
               </button>
@@ -122,10 +123,10 @@
           </div>
           <div class="row">
             <div class="col-md-5">
-              <label for="toCurr" class="form-label h3 text-white">To:</label>
+              <label for="toCurr" class="form-label h4 mb-3 text-white">To:</label>
             </div>
             <div class="col-md-4 mb-2">
-              <input class="form-control" list="datalistOptions" id="toCurr" placeholder="Type to search Currency...">
+              <input class="form-control bg-dark text-white border-secondary shadow-sm" list="datalistOptions" id="toCurr" placeholder="Type to search Currency...">
               <datalist id="datalistOptions">
                 <option value="AED">AED - UAE Dirham</option>
                 <option value="ARS">ARS - Argentine Peso</option>
@@ -189,19 +190,19 @@
               </datalist>
             </div>
           </div>
-          <div class="row d-flex align-items-center mt-3">
+          <div class="row d-flex justify-content-center align-items-center mt-3">
             <div class="col-auto px-1">
-              <button class="round-btn">
+              <button class="round-btn" id="viewHistory">
                 <i class="fa-solid fa-clock-rotate-left"></i>
               </button>
             </div>
             <div class="col-12 col-md-9 d-flex flex-column flex-md-row justify-content-between gap-2">
-              <button class="btn btn-outline-light" style="flex-grow: 1;">Save Currency</button>
+              <button class="btn btn-outline-light" style="flex-grow: 1;" id="saveCurrencyBtn">Save Currency</button>
               <button class="btn btn-outline-light" id="convert" style="flex-grow: 1;">Convert</button>
               <button class="btn btn-outline-light" style="flex-grow: 1;">Historical Data</button>
             </div>
             <div class="col-auto px-1">
-              <button class="round-btn">
+              <button class="round-btn" id="toggleFavorite">
                 <i class="fa-solid fa-heart"></i>
               </button>
             </div>
@@ -219,16 +220,15 @@
         </div>
       </fieldset>
     </div>
-    <div class="col-md-2"></div>
-    <div class="col-md-4 container">
+    <div class="col-md-4 container pt-5">
       <div class="market-panel">
         <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
           <h3 class="text-white mb-0">Market Insights</h3>
-          <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#managePairsModal" id="manageMarketPairsBtn">
+          <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#managePairsModal" id="manageMarketPairsBtn">
             Manage List <i class="fa-solid fa-gear"></i>
           </button>
         </div>
-        <div id="market-list">
+        <div id="market-list" class="pt-2">
           <p class="text-light">Initializing market data...</p>
         </div>
       </div>
@@ -259,7 +259,30 @@
         </div>
       </div>
     </div>
+    <div class="col-md-1"></div>
   </div>
+  <div class="history-panel-container" id="history-panel" style="display: none;">
+    <div class="card bg-dark text-white border-white shadow-lg">
+      <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Conversion History</h5>
+        <button class="btn-close btn-close-white" id="closeHistoryBtn" aria-label="Close History"></button>
+      </div>
+      <div class="card-body p-0" id="history-list-body">
+        <p class="text-secondary p-3 mb-0">Loading history...</p>
+      </div>
+    </div>
+  </div>
+  <div class="favorites-panel-container" id="favorites-panel" style="display: none;">
+    <div class="card bg-dark text-white border-white shadow-lg">
+        <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Favorite Currency Pairs</h5>
+            <button class="btn-close btn-close-white" id="closeFavoritesBtn" aria-label="Close Favorites"></button>
+        </div>
+        <div class="card-body p-0" id="favorites-list-body">
+            <p class="text-secondary p-3 mb-0">Loading favorites...</p>
+        </div>
+    </div>
+</div>
   <script src="script.js"></script>
   <script src="marketInsights.js"></script>
 </body>
