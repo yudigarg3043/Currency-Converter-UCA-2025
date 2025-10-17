@@ -1,7 +1,7 @@
 const EXCHANGE_RATE_API_KEY = "703459cf375a15b3773dbe4b";
 const EXCHANGE_RATE_BASE_URL = `https://v6.exchangerate-api.com/v6/${EXCHANGE_RATE_API_KEY}`;
 const MARKET_PAIRS_KEY = 'preferredMarketPairs';
-const API_CONCURRENT_LIMIT = 3;
+const MAX_PREFERRED_PAIRS = 3;
 
 const POLYGON_BASE_URL = "https://api.polygon.io/v2/aggs/ticker/";
 const POLYGON_API_KEY = "M_kZ2mPocJ0aQ6GTOGZc3gohct3EDbgJ"; // Placeholder/Example Key (Must be real)
@@ -34,34 +34,44 @@ function calculateChange(...prices) {
 
 let preferredMarketPairsObject = loadPreferredPairsObject();
 
+/**
+ * Handles adding a new pair and enforcing the FIFO limit.
+ * NOTE: Removal is handled directly by the modal's click listeners.
+ */
 function toggleMarketPairPreference(pairCode, longName) {
     let pairsArray = Object.values(preferredMarketPairsObject);
 
+    // If pair already exists, we do NOTHING (the calling function handled the check/alert)
     if (preferredMarketPairsObject.hasOwnProperty(pairCode)) {
-        // CASE 1: Pair is ALREADY SAVED
-        alert(`${pairCode} already in preferences.`);
-        
-    } else {
-        // CASE 2: New Pair is being ADDED
-        if (pairsArray.length >= API_CONCURRENT_LIMIT) {
-            // FIFO Logic: Identify the oldest (first) pair in the object and remove it.
-            const oldestPairCode = Object.keys(preferredMarketPairsObject)[0];
-            
-            delete preferredMarketPairsObject[oldestPairCode];
-            console.warn(`Limit reached (${MAX_PREFERRED_PAIRS}). Removed oldest pair: ${oldestPairCode}`);
-        }
-
-        preferredMarketPairsObject[pairCode] = { code: pairCode, longName: longName };
-        console.log(`Added ${pairCode} to preferences.`);
+        // This block is only entered if the item is being explicitly added via the modal's input field
+        // and we pass the check, but for general removal (e.g., failed item), the modal handles deletion.
+        return; 
     }
 
+    // CASE: New Pair is being ADDED (Add and enforce limit)
+    if (pairsArray.length >= MAX_PREFERRED_PAIRS) {
+        // FIFO Logic: Remove the oldest (first) pair
+        const oldestPairCode = Object.keys(preferredMarketPairsObject)[0];
+        
+        delete preferredMarketPairsObject[oldestPairCode];
+        console.warn(`Limit reached (${MAX_PREFERRED_PAIRS}). Removed oldest pair: ${oldestPairCode}`);
+    }
+
+    // Add the new pair
+    preferredMarketPairsObject[pairCode] = { code: pairCode, longName: longName };
+    console.log(`Added ${pairCode} to preferences.`);
+
+    // Save the updated object and re-render the UI
     savePreferredPairsObject(preferredMarketPairsObject);
     populateMarketPanel(); 
 }
 
+// --- 2. CORE RENDERING FUNCTION ---
+
 async function populateMarketPanel() {
     const newsContainer = document.getElementById('market-list'); 
-    const pairsToFetch = Object.keys(preferredMarketPairsObject).slice(0, API_CONCURRENT_LIMIT);
+    // CRITICAL: Slice the pairs list to respect the concurrency limit
+    const pairsToFetch = Object.keys(preferredMarketPairsObject).slice(0, MAX_PREFERRED_PAIRS);
     
     newsContainer.innerHTML = '<p class="text-light text-center mt-3">Fetching live market data...</p>';
 
@@ -70,7 +80,6 @@ async function populateMarketPanel() {
         const [from, to] = code.split('/');
         
         const currentUrl = `${EXCHANGE_RATE_BASE_URL}/pair/${from}/${to}`; 
-        
         const polygonTicker = `C:${from}${to}`; 
         const historicalUrl = `${POLYGON_BASE_URL}${polygonTicker}/prev?adjusted=true&apiKey=${POLYGON_API_KEY}`;
 
@@ -88,10 +97,11 @@ async function populateMarketPanel() {
                 throw new Error(`Current Rate API failure: ${currentAPI_Data["error-type"]}`);
             }
 
+            // Polygon.io Check: Check results array for historical close price ('c')
             if (historicalAPI_Data.results && historicalAPI_Data.results.length > 0) {
                 historicalPrice = historicalAPI_Data.results[0].c;
             } else {
-                 throw new Error("Historical data failed to load.");
+                throw new Error("Historical data failed to load.");
             }
 
             const changePercent = calculateChange(historicalPrice, currentPrice).toFixed(2); 
@@ -112,6 +122,7 @@ async function populateMarketPanel() {
 
     const marketData = await Promise.all(allFetches);
     
+    // 3. Render Results
     newsContainer.innerHTML = '';
     
     const validData = marketData.filter(item => !item.failed);
@@ -125,7 +136,8 @@ async function populateMarketPanel() {
         const sign = change >= 0 ? '+' : '';
         
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'd-flex justify-content-between align-items-center p-2 my-2 rounded-3 border border-secondary market-item';
+        // NOTE: Removed 'bg-dark' to rely on CSS background setting
+        itemDiv.className = 'd-flex justify-content-between align-items-center p-2 my-2 rounded-3 border border-secondary market-item'; 
         
         itemDiv.innerHTML = `
             <div>
@@ -146,9 +158,13 @@ async function populateMarketPanel() {
         newsContainer.appendChild(itemDiv);
     });
 
+    // Render failed data
     failedData.forEach(item => {
         const itemDiv = document.createElement('div');
+        // Use custom dark red background for error card and muted text
         itemDiv.className = 'd-flex justify-content-between p-2 my-1 rounded border border-danger text-danger small';
+        itemDiv.style.backgroundColor = '#301A1A'; // Dark muted error background
+        
         itemDiv.innerHTML = `<span>${item.code} load failed.</span>
             <button class="btn btn-sm btn-outline-danger toggle-market-btn" 
                     data-pair="${item.code}" data-name="${item.longName}">
@@ -161,15 +177,23 @@ async function populateMarketPanel() {
         newsContainer.innerHTML = '<p class="text-info text-center mt-3">Use the "Manage List" button to add a pair!</p>';
     }
 
+    // Attach event listeners for the remove/star buttons on the main panel
     document.querySelectorAll('#market-list .toggle-market-btn').forEach(button => {
         button.onclick = (event) => {
             const pairCode = event.currentTarget.getAttribute('data-pair');
             const longName = event.currentTarget.getAttribute('data-name');
-            toggleMarketPairPreference(pairCode, longName); 
+            
+            // This is primarily the REMOVE action when clicked on the main panel
+            // Since it exists, we delete it.
+            delete preferredMarketPairsObject[pairCode];
+            savePreferredPairsObject(preferredMarketPairsObject);
+            populateMarketPanel(); 
         };
     });
 }
 
+
+// --- 3. MODAL MANAGEMENT ---
 
 function renderManagePairsModal() {
     const display = document.getElementById('currentPairsDisplay');
@@ -183,15 +207,21 @@ function renderManagePairsModal() {
 
     pairsArray.forEach(pair => {
         const tag = document.createElement('span');
-        tag.className = 'badge bg-warning text-dark me-2 p-2 remove-tag';
+        tag.className = 'badge text-dark me-2 p-2 remove-tag';
+        tag.style.backgroundColor = '#7fefe2'; // Cyan/Mint accent color
         tag.textContent = `${pair.code} (Remove)`;
         tag.setAttribute('data-pair', pair.code);
         tag.style.cursor = 'pointer';
 
+        // Event: Direct removal when clicking the tag inside the modal
         tag.onclick = (event) => {
-            const pairCode = event.target.getAttribute('data-pair');
-            toggleMarketPairPreference(pairCode, pair.longName);
-            renderManagePairsModal();
+            const pairToRemove = event.target.getAttribute('data-pair');
+            
+            delete preferredMarketPairsObject[pairToRemove];
+            savePreferredPairsObject(preferredMarketPairsObject);
+            
+            renderManagePairsModal(); // Update modal
+            populateMarketPanel();    // Update main panel
         };
         display.appendChild(tag);
     });
@@ -209,8 +239,17 @@ document.getElementById('addCustomPairBtn').onclick = () => {
             return;
         }
 
+        // CRITICAL CHECK: Alert if the pair is already saved
+        if (preferredMarketPairsObject.hasOwnProperty(pairCode)) {
+            alert(`⚠️ ${pairCode} is already in your list.`);
+            return; 
+        }
+
         const longName = `${from} / ${to}`; 
+        
+        // Add pair and handle FIFO logic
         toggleMarketPairPreference(pairCode, longName); 
+        
         input.value = '';
         renderManagePairsModal();
     } else {

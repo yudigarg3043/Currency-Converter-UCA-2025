@@ -34,15 +34,15 @@
       <fieldset class=" container form_fieldset px-3 pb-4">
         <legend class="form__legend">Fiat-Currency Converter</legend>
         <div class="container mt-3">
-          <div class="row">
+          <div class="row mb-1">
             <div class="col-md-5">
               <label for="amount" class="form-label h4 mb-3 text-white">Enter Amount:</label>
             </div>
             <div class="col-md-4">
-              <input class="form-control bg-dark text-white border-secondary shadow-sm" id="amount" placeholder="Type amount to convert..." type="number" min="0" step="any">
+              <input class="form-control text-white border-secondary shadow-sm" id="amount" placeholder="Type amount to convert..." type="number" min="0" step="any">
             </div>
             <div class="col-md-2">
-              <button class="btn btn-outline-light m-1" id="reset"><h5>Reset</h5></button>
+              <button class="btn btn-outline-light fs-6" id="reset">Reset</button>
             </div>
           </div>
           <div class="row">
@@ -50,7 +50,7 @@
               <label for="fromCurr" class="form-label h4 mb-3 text-white">From:</label>
             </div>
             <div class="col-md-4">
-              <input class="form-control bg-dark text-white border-secondary shadow-sm" list="datalistOptions" id="fromCurr" placeholder="Type to search Currency...">
+              <input class="form-control text-white border-secondary shadow-sm" list="datalistOptions" id="fromCurr" placeholder="Type to search Currency...">
               <datalist id="datalistOptions">
                 <option value="AED">AED - UAE Dirham</option>
                 <option value="ARS">ARS - Argentine Peso</option>
@@ -126,7 +126,7 @@
               <label for="toCurr" class="form-label h4 mb-3 text-white">To:</label>
             </div>
             <div class="col-md-4 mb-2">
-              <input class="form-control bg-dark text-white border-secondary shadow-sm" list="datalistOptions" id="toCurr" placeholder="Type to search Currency...">
+              <input class="form-control text-white border-secondary shadow-sm" list="datalistOptions" id="toCurr" placeholder="Type to search Currency...">
               <datalist id="datalistOptions">
                 <option value="AED">AED - UAE Dirham</option>
                 <option value="ARS">ARS - Argentine Peso</option>
@@ -199,7 +199,7 @@
             <div class="col-12 col-md-9 d-flex flex-column flex-md-row justify-content-between gap-2">
               <button class="btn btn-outline-light" style="flex-grow: 1;" id="saveCurrencyBtn">Save Currency</button>
               <button class="btn btn-outline-light" id="convert" style="flex-grow: 1;">Convert</button>
-              <button class="btn btn-outline-light" style="flex-grow: 1;">Historical Data</button>
+              <a href="history.html" class="btn btn-outline-light" style="flex-grow: 1; text-decoration: none;">Historical Data</a>
             </div>
             <div class="col-auto px-1">
               <button class="round-btn" id="toggleFavorite">
@@ -221,15 +221,27 @@
       </fieldset>
     </div>
     <div class="col-md-4 container pt-5">
-      <div class="market-panel">
-        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
-          <h3 class="text-white mb-0">Market Insights</h3>
-          <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#managePairsModal" id="manageMarketPairsBtn">
-            Manage List <i class="fa-solid fa-gear"></i>
-          </button>
+      <div class="row">
+        <div class="market-panel">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="text-white mb-0">Market Insights</h3>
+            <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#managePairsModal" id="manageMarketPairsBtn">
+              Manage List <i class="fa-solid fa-gear"></i>
+            </button>
+          </div>
+          <div id="market-list" class="pt-2">
+            <p class="text-light">Initializing market data...</p>
+          </div>
         </div>
-        <div id="market-list" class="pt-2">
-          <p class="text-light">Initializing market data...</p>
+      </div>
+      <div class="row">
+        <div class="ticker-wrap container-fluid px-0">
+          <div class="d-flex justify-content-between align-items-center mb-2 px-3">
+              <h5 class="text-white mb-0">Live News</h5>
+          </div>
+          <div id="ticker" class="ticker">
+              <ul id="newsList" class="news-list"></ul>
+          </div>
         </div>
       </div>
     </div>
@@ -285,5 +297,6 @@
 </div>
   <script src="script.js"></script>
   <script src="marketInsights.js"></script>
+  <script src="news.js"></script>
 </body>
 </html>
