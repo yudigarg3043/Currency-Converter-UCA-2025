@@ -32,7 +32,6 @@ function saveHistory(amount, from, to, conversionResult) {
     historyRecords.unshift(newRecord);
     if (historyRecords.length > 10) { historyRecords.pop(); }
     localStorage.setItem(HISTORY_KEY, JSON.stringify(historyRecords));
-    if (typeof renderHistoryPanel === 'function') renderHistoryPanel();
 }
 
 

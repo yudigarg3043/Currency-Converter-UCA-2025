@@ -29,3 +29,37 @@ body {
     color: white;
     box-shadow: 0 0 0 0.25rem rgba(135, 206, 250, 0.4);
 }
+.ticker {
+    height: 500px; 
+    overflow: hidden;
+    position: relative;
+    border-radius: 0.375rem;
+    background: transparent; 
+    box-shadow: none;
+}
+
+.news-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.news-item {
+    padding: .55rem .75rem; 
+    background: transparent; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);    
+    display: flex;
+    align-items: center;
+}
+
+.news-item a {
+    color: white !important; 
+    transition: color 0.2s ease;
+}
+
+.news-item a:hover {
+    color: #55202a !important; 
+}
+
+.ticker::-webkit-scrollbar { display: none; }
+.ticker { -ms-overflow-style: none; scrollbar-width: none; }
