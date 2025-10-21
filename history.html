@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Currency Analysis</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> 
+    
+    <script src="https://kit.fontawesome.com/8088569b2d.js" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Minimal CSS Overrides (Ensure these match your style.css dark theme) */
+        body {
+            background-image: url('bg-2.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .main-container {
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+            border: 4px solid #55202a;
+            border-radius: 10px;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* background-color: #55202a; */
+        }
+        .data-card {
+            min-height: 400px;
+            background-color: #121212;
+            border: 4px solid #55202a;
+            border-radius: 8px;
+        }
+        .form-control-dark {
+            background-color: #2c2c2c;
+            color: white;
+            border-color: #555;
+        }
+        .form-control-dark:focus {
+            background-color: #333;
+            border-color: #87CEFA;
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(135, 206, 250, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container nav-bar rounded-5 px-3 py-2 border border-dark mt-4" style="background-color: #55202a;">
+    <nav class="navbar navbar-expand-lg navbar-light p-0">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white ps-3 fs-4" href="#">Currency Converter</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse ps-3 m-2 rounded-pill" id="navbarNavAltMarkup">
+          <div class="navbar-nav w-100 fs-5">
+            <a class="nav-link text-white py-1" aria-current="page">Home</a>
+            <a class="nav-link text-white py-1" href="#">Crypto-Currency</a>
+            <a class="nav-link text-white py-1" href="#">Feedback</a>
+            <a class="nav-link text-white py-1" href="#">About</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+    <div class="container main-container">
+        <h2 class="text-white mb-4 pb-2" style="border-bottom: 4px solid #55202a;">Historical Rate Analysis</h2>
+        <div class="row">
+            <div class="col-lg-8">  
+                <div class="card data-card mb-4 p-3">  
+                    <div class="d-flex justify-content-between align-items-center pb-2 mb-3" style="border-bottom: 4px solid #55202a;">
+                        <h5 class="text-white mb-0">7-Day Trend (<span id="graphPairDisplay">USD/EUR</span>)</h5>
+                    </div>
+                    <div class="card-body bg-dark rounded p-3 mb-4">
+                        <div id="historicalChart" class="text-secondary d-flex align-items-center justify-content-center">
+                            <canvas id="historicalChartCanvas" style="height: 350px;"></canvas>
+                        </div>
+                    </div>
+                    <h6 class="text-white pb-2 mt-2" style="border-bottom: 4px solid #55202a;">Update Chart Pair:</h6>
+                    <form id="graphControlForm" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="graphFromCurr" class="form-label text-light small mb-0">From:</label>
+                            <input type="text" class="form-control form-control-dark" list="currencyOptions" id="graphFromCurr" value="USD" placeholder="USD" required maxlength="3">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="graphToCurr" class="form-label text-light small mb-0">To:</label>
+                            <input type="text" class="form-control form-control-dark" list="currencyOptions" id="graphToCurr" value="INR" placeholder="INR" required maxlength="3">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-info w-100 fw-bold">Update Chart</button>
+                        </div>
+                    </form>
+                </div> 
+                <div class="card data-card p-3" style="min-height: auto;">
+                    <h5 class="text-white pb-2" style="border-bottom: 4px solid #55202a;">Specific Date Rate Lookup</h5>
+                    <form id="dateLookupForm" class="row g-3 align-items-end mt-2">
+                        <div class="col-md-3">
+                            <label for="dateFromCurr" class="form-label text-light small mb-0">From:</label>
+                            <input type="text" class="form-control form-control-dark" list="currencyOptions" id="dateFromCurr" placeholder="USD" required maxlength="3">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="dateToCurr" class="form-label text-light small mb-0">To:</label>
+                            <input type="text" class="form-control form-control-dark" list="currencyOptions" id="dateToCurr" placeholder="INR" required maxlength="3">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="historicalDate" class="form-label text-light small mb-0">Date (YYYY-MM-DD):</label>
+                            <input type="date" class="form-control form-control-dark" id="historicalDate" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-warning w-100 fw-bold">Fetch</button>
+                        </div>
+                    </form>
+                    <div class="mt-3 p-3 bg-dark rounded border border-secondary" id="dateRateResult" style="display: none;">
+                        <p class="text-success mb-0 fw-bold">Rate:</p>
+                        <p class="text-white mb-0" id="rateDisplay">1 USD = 87.96 INR</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card data-card p-3">
+                    <h5 class="text-white">Live Financial News</h5>
+                    <div id="news-section-placeholder" style="min-height: 550px;" class="text-secondary pt-3">
+                         <p class="text-center">News Ticker Placeholder</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <datalist id="currencyOptions">
+        <option value="AED">AED - UAE Dirham</option><option value="ARS">ARS - Argentine Peso</option>
+        <option value="AUD">AUD - Australian Dollar</option><option value="BDT">BDT - Bangladeshi Taka</option>
+        <option value="BRL">BRL - Brazilian Real</option><option value="CAD">CAD - Canadian Dollar</option>
+        <option value="EUR">EUR - Euro</option><option value="GBP">GBP - Pound Sterling</option>
+        <option value="INR">INR - Indian Rupee</option><option value="JPY">JPY - Japanese Yen</option>
+        <option value="USD">USD - United States Dollar</option>
+    </datalist>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="HistoricalService.js"></script>
+    <script>
+        // --- Page Logic (Uses the HistoricalRateService class instance) ---
+        
+        // Global variable to hold the chart instance
+        let historicalChartInstance = null; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // The historicalService object is defined and exported in HistoricalService.js
+            const historyAnalyser = historicalService; 
+
+            const graphPairDisplay = document.getElementById('graphPairDisplay');
+            const graphFromCurrInput = document.getElementById('graphFromCurr');
+            const graphToCurrInput = document.getElementById('graphToCurr');
+            const chartArea = document.getElementById('historicalChart');
+            const chartCanvas = document.getElementById('historicalChartCanvas');
+
+            // Function to initiate the graph update
+            const updateGraph = async (from, to) => {
+                if (!from || !to) return;
+                graphPairDisplay.textContent = `${from}/${to}`;
+                
+                // Display loading message
+                chartArea.innerHTML = `<p class="text-info text-center pt-5">Fetching 7-day trend for ${from}/${to}...</p>`;
+
+                const rawData = await historyAnalyser.fetchTimeHistory(from, to, 7);
+                
+                if (rawData && rawData.length > 0) {
+                    
+                    // Destroy old chart instance before creating a new one
+                    if (historicalChartInstance) {
+                        historicalChartInstance.destroy();
+                    }
+                    
+                    // Get the 2D rendering context (CRITICAL FIX for Chart.js)
+                    const ctx = chartCanvas.getContext('2d');
+
+                    if (typeof Chart !== 'undefined' && ctx) {
+                        // --- DATA PROCESSING FOR CHART.JS (Destructuring and Loops) ---
+                        const labels = rawData.map(d => d.date);
+                        const rates = rawData.map(d => d.rate);
+                        
+                        // Clear the loading message, re-append canvas
+                        chartArea.innerHTML = ''; 
+                        chartArea.appendChild(chartCanvas);
+                        
+                        historicalChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: `${from}/${to} Exchange Rate`,
+                                    data: rates,
+                                    borderColor: '#87CEFA', // Light Blue/Cyan color
+                                    backgroundColor: 'rgba(135, 206, 250, 0.2)',
+                                    tension: 0.3,
+                                    fill: true,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: { ticks: { color: 'white' }, grid: { color: '#333' } },
+                                    y: { ticks: { color: 'white' }, grid: { color: '#333' } }
+                                },
+                                plugins: {
+                                    legend: { labels: { color: 'white' } },
+                                    title: { display: false }
+                                }
+                            }
+                        });
+                    } else {
+                        chartArea.innerHTML = `<p class="text-danger text-center pt-5">Chart rendering failed: Chart.js library or canvas context not ready.</p>`;
+                    }
+                } else {
+                    // Error state if data is empty
+                    chartArea.innerHTML = `<p class="text-danger text-center pt-5">Failed to load 7-day trend. (API limit reached or invalid pair)</p>`;
+                }
+            };
+
+            // --- 1. Graph Control Form Handler ---
+            document.getElementById('graphControlForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const from = graphFromCurrInput.value.toUpperCase();
+                const to = graphToCurrInput.value.toUpperCase();
+                
+                if (from.length === 3 && to.length === 3) {
+                    updateGraph(from, to);
+                } else {
+                    alert("Please enter valid 3-letter currency codes for the graph.");
+                }
+            });
+
+            // --- 2. Single Date Lookup Form Handler ---
+            document.getElementById('dateLookupForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const from = document.getElementById('dateFromCurr').value.toUpperCase();
+                const to = document.getElementById('dateToCurr').value.toUpperCase();
+                const date = document.getElementById('historicalDate').value;
+                
+                const resultContainer = document.getElementById('dateRateResult');
+                const rateDisplay = document.getElementById('rateDisplay');
+
+                if (!from || !to || !date) return alert("Please fill all fields.");
+
+                rateDisplay.textContent = 'Fetching...';
+                resultContainer.style.display = 'block';
+
+                const rate = await historyAnalyser.fetchRateForDate(from, to, date);
+
+                if (rate) {
+                    rateDisplay.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+                    rateDisplay.className = 'text-success mb-0 fw-bold';
+                } else {
+                    rateDisplay.textContent = `Data not available for ${from}/${to} on ${date}. (Check console for API errors)`;
+                    rateDisplay.className = 'text-danger mb-0 fw-bold';
+                }
+            });
+
+            // Initial load: Set the initial graph data using the default input values
+            updateGraph(graphFromCurrInput.value.toUpperCase(), graphToCurrInput.value.toUpperCase());
+        });
+    </script>
+</body>
+</html>
