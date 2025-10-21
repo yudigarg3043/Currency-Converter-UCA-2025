@@ -1,20 +1,19 @@
 // ====================================================================
-// File: HistoricalService.js (FINAL CODE)
-// CONCEPTS: Classes, Prototypical Inheritance, Private Fields
+// COMPLETE HISTORICAL DATA SCRIPT (history.js) - POLYGON EXCLUSIVE
 // ====================================================================
 
-const EXCHANGE_RATE_BASE_URL = 'https://v6.exchangerate-api.com/v6/';
-const EXCHANGE_RATE_API_KEY = '703459cf375a15b3773dbe4b'; 
+// --- 1. CONFIGURATION AND SERVICE CLASSES ---
 const POLYGON_BASE_URL = 'https://api.polygon.io/v2/';
-const POLYGON_API_KEY = 'M_kZ2mPocJ0aQ6GTOGZc3gohct3EDbgJ'; // Placeholder/Example Key
+const POLYGON_API_KEY = 'M_kZ2mPocJ0aQ6GTOGZc3gohct3EDbgJ';
 
 /**
- * BaseService: Handles generic API configuration and fetching.
+ * BaseService: Handles generic API fetching.
+ * Only uses Polygon credentials set in the HistoricalRateService constructor.
  */
 class BaseService {
     
     constructor(apiKey, baseUrl) {
-        this.apiKey = apiKey; // Standard property (accessible by child classes)
+        this.apiKey = apiKey;
         this.baseUrl = baseUrl;
     }
 
@@ -22,7 +21,6 @@ class BaseService {
      * Protected method for making authenticated API calls.
      */
     async _fetch(endpoint) {
-        // Uses the current class instance's apiKey and baseUrl
         const url = `${this.baseUrl}${endpoint}${endpoint.includes('?') ? '&' : '?'}apiKey=${this.apiKey}`;
         
         try {
@@ -40,8 +38,8 @@ class BaseService {
 }
 
 /**
- * HistoricalRateService: Inherits from BaseService, specializing in time-series data.
- * CONCEPTS: Prototypical Inheritance
+ * HistoricalRateService: Inherits from BaseService.
+ * All methods now enforce the use of Polygon.io credentials.
  */
 class HistoricalRateService extends BaseService {
     
@@ -53,10 +51,10 @@ class HistoricalRateService extends BaseService {
     }
 
     /**
-     * Fetches a series of historical rates for the last 7 days dynamically (Polygon).
+     * Fetches a series of historical rates for the last 7 days dynamically.
      */
     async fetchTimeHistory(from, to, days = 7) {
-        // Use the Polygon API for time series data (overrides inherited properties)
+        // Enforce Polygon credentials
         this.baseUrl = POLYGON_BASE_URL;
         this.apiKey = POLYGON_API_KEY;
 
@@ -85,27 +83,152 @@ class HistoricalRateService extends BaseService {
     }
 
     /**
-     * Fetches the closing price for a single past date (ExchangeRate-API).
+     * Fetches the closing price for a single past date (Polygon).
      */
     async fetchRateForDate(from, to, date) {
-        // Use the ExchangeRate-API for single date lookup (overrides inherited properties)
-        this.baseUrl = EXCHANGE_RATE_BASE_URL;
-        this.apiKey = EXCHANGE_RATE_API_KEY;
+        // Enforce Polygon credentials
+        this.baseUrl = POLYGON_BASE_URL;
+        this.apiKey = POLYGON_API_KEY;
         
-        const [Y, M, D] = date.split('-');
-        const endpoint = `history/${from}/${Y}/${M}/${D}`; 
+        const lookupDate = date; 
+        const ticker = `C:${from}${to}`;
+        
+        // Polygon endpoint structure for a single day's closing price
+        const endpoint = `aggs/ticker/${ticker}/range/1/day/${lookupDate}/${lookupDate}?adjusted=true&sort=asc&limit=1`;
         
         const data = await this._fetch(endpoint);
 
-        if (data && data.result === 'success') {
-            return data.conversion_rates[to];
+        if (data && data.results && data.results.length > 0) {
+            return data.results[0].c; 
         }
+        
+        console.error(`Data not found for ${from}/${to} on ${date} via Polygon.`);
         return null;
     }
 }
 
 // Global service instance
 const historicalService = new HistoricalRateService(
-    EXCHANGE_RATE_API_KEY, 
-    EXCHANGE_RATE_BASE_URL
+    POLYGON_API_KEY, 
+    POLYGON_BASE_URL // Initial values are now Polygon's
 );
+
+// Global chart state
+let historicalChartInstance = null; 
+
+
+// ====================================================================
+// SECTION 2: PAGE LOGIC AND EVENT HANDLERS
+// ====================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const historyAnalyser = historicalService; 
+
+    const graphPairDisplay = document.getElementById('graphPairDisplay');
+    const graphFromCurrInput = document.getElementById('graphFromCurr');
+    const graphToCurrInput = document.getElementById('graphToCurr');
+    const chartArea = document.getElementById('historicalChart');
+    const chartCanvas = document.getElementById('historicalChartCanvas');
+
+    // Function to initiate the graph update
+    const updateGraph = async (from, to) => {
+        if (!from || !to) return;
+        graphPairDisplay.textContent = `${from}/${to}`;
+        
+        chartArea.innerHTML = `<p class="text-info text-center pt-5">Fetching 7-day trend for ${from}/${to}...</p>`;
+
+        const rawData = await historyAnalyser.fetchTimeHistory(from, to, 7);
+        
+        if (rawData && rawData.length > 0) {
+            
+            if (historicalChartInstance) {
+                historicalChartInstance.destroy();
+            }
+            
+            const ctx = chartCanvas.getContext('2d');
+
+            if (typeof Chart !== 'undefined' && ctx) {
+                const labels = rawData.map(d => d.date);
+                const rates = rawData.map(d => d.rate);
+                
+                chartArea.innerHTML = ''; 
+                chartArea.appendChild(chartCanvas);
+                
+                historicalChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${from}/${to} Exchange Rate`,
+                            data: rates,
+                            borderColor: '#87CEFA', 
+                            backgroundColor: 'rgba(135, 206, 250, 0.2)',
+                            tension: 0.3,
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: 'white' }, grid: { color: '#333' } },
+                            y: { ticks: { color: 'white' }, grid: { color: '#333' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: 'white' } },
+                            title: { display: false }
+                        }
+                    }
+                });
+            } else {
+                chartArea.innerHTML = `<p class="text-danger text-center pt-5">Chart rendering failed: Chart.js library or canvas context not ready.</p>`;
+            }
+        } else {
+            chartArea.innerHTML = `<p class="text-danger text-center pt-5">Failed to load 7-day trend. (API limit reached or invalid pair)</p>`;
+        }
+    };
+
+    // --- 1. Graph Control Form Handler ---
+    document.getElementById('graphControlForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const from = graphFromCurrInput.value.toUpperCase();
+        const to = graphToCurrInput.value.toUpperCase();
+        
+        if (from.length === 3 && to.length === 3) {
+            updateGraph(from, to);
+        } else {
+            alert("Please enter valid 3-letter currency codes for the graph.");
+        }
+    });
+
+    // --- 2. Single Date Lookup Form Handler ---
+    document.getElementById('dateLookupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const from = document.getElementById('dateFromCurr').value.toUpperCase();
+        const to = document.getElementById('dateToCurr').value.toUpperCase();
+        const date = document.getElementById('historicalDate').value;
+        
+        const resultContainer = document.getElementById('dateRateResult');
+        const rateDisplay = document.getElementById('rateDisplay');
+
+        if (!from || !to || !date) return alert("Please fill all fields.");
+
+        rateDisplay.textContent = 'Fetching...';
+        resultContainer.style.display = 'block';
+
+        const rate = await historyAnalyser.fetchRateForDate(from, to, date);
+
+        if (rate) {
+            rateDisplay.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+            rateDisplay.className = 'text-success mb-0 fw-bold';
+        } else {
+            rateDisplay.textContent = `Data not available for ${from}/${to} on ${date}. (Check console for API errors)`;
+            rateDisplay.className = 'text-danger mb-0 fw-bold';
+        }
+    });
+
+    // Initial load: Set the initial graph data using the default input values
+    updateGraph(graphFromCurrInput.value.toUpperCase(), graphToCurrInput.value.toUpperCase());
+});
