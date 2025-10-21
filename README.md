@@ -1,6 +1,3 @@
-That's great! Adding the live demo link makes your project submission complete.
-
-Here is the final, complete content for your `README.md` file, including the link to view your live website.
 
 ***
 
